@@ -88,15 +88,20 @@ def load_network(hidden_units):
 
     return model
 
-
-def training(model, classifier, learning_rate, device, epochs, trainloader, validloader, testloader):
+def optim(model, learning_rate):
     #
     # Setting up the training configurations and definitions
     # # Loss with the Negative Log LikeLihood
     criterion = nn.NLLLoss()
     # learning_rate = 0.001
     # Adam is the chosen Optimizer
-    optimizer = optim.Adam(model.classifier.parameters(), lr=learning_rate)
+    optimizer = optim.Adam(model.classifier.parameters(), lr=learning_rate)   
+    
+    return criterion, optimizer
+
+
+def training(model, device, epochs, trainloader, optimizer, criterion, validloader, testloader):
+
     # Put the model into the GPU
     model.to(device)
 

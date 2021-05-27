@@ -5,7 +5,7 @@
 import argparse
 
 from torchvision import models
-from model_functions import data_load, gpu_cpu, load_network, training
+from model_functions import data_load, gpu_cpu, load_network, optim, training
 
 # def get_input_args():
 parser = argparse.ArgumentParser()
@@ -21,7 +21,6 @@ parser.add_argument('--chkp_location', default = 'checkpoint.pth', help = 'Where
 args = parser.parse_args()
 
 
-
 # run the training by executing the functions in model_functions
 # load the data and create the datasets
 trainloader, validloader, testloader = data_load(args.data_dir)
@@ -29,9 +28,9 @@ trainloader, validloader, testloader = data_load(args.data_dir)
 device = gpu_cpu(args.gpu)
 # 
 model = load_network(args.hidden_units)
-#
-# classifier = new_classifier(args.hidden_units)
+# function to generate the loss optimizer and criterion for the training
+criterion, optimizer = optim(model, args.learning_rate)
 # returns the trained model
-t_model = training(model, args.learning_rate, device, args.epochs, trainloader, validloader, testloader)
+t_model = training(model, device, args.epochs, trainloader, optimizer, criterion, validloader, testloader)
 
 # savechkp(t_model)
