@@ -5,7 +5,7 @@
 import argparse
 
 from torchvision import models
-from Model_funtions import data_load, gpu_cpu, load_network, new_classifier, training
+from model_functions import data_load, gpu_cpu, load_network, training
 
 # def get_input_args():
 parser = argparse.ArgumentParser()
@@ -17,6 +17,7 @@ parser.add_argument('--learning_rate', default = 0.01, type = float, dest= 'lear
 parser.add_argument('--epochs', default = 2, type = int, dest = 'epochs', help = 'Set the number of epochs to train the model')
 parser.add_argument('--hidden_units', default = 512, type = int, dest = 'hidden_units', help = 'Set the number of hidden units in the classifier')
 parser.add_argument('--gpu', type = bool, default = True, help = 'Use the GPU or cpu?')
+parser.add_argument('--chkp_location', default = 'checkpoint.pth', help = 'Where will the checkpoint be saved?')
 args = parser.parse_args()
 
 
@@ -27,10 +28,10 @@ trainloader, validloader, testloader = data_load(args.data_dir)
 # using the GPU?
 device = gpu_cpu(args.gpu)
 # 
-model = load_network(args.arch)
+model = load_network(args.hidden_units)
 #
-classifier = new_classifier(args.hidden_units)
+# classifier = new_classifier(args.hidden_units)
 # returns the trained model
-t_model = training(model, classifier, args.learning_rate, device, args.epochs, trainloader, validloader)
+t_model = training(model, args.learning_rate, device, args.epochs, trainloader, validloader, testloader)
 
-
+# savechkp(t_model)

@@ -68,18 +68,14 @@ def gpu_cpu(gpu):
     return device
 
 
-def load_network(arch):
+def load_network(hidden_units):
     # load a pre-trained netwerk selected
-    model = models.arch(pretrained=True)
+    model = models.vgg11(pretrained=True)
 
-    # Freeze parameters so we don't backprop throu,
+    # Freeze parameters so we don't backprop through them,
     for param in model.parameters():
         param.requires_grad = False
 
-    return model
-
-
-def classifier(hidden_units):
     # Define new classifier
     classifier = nn.Sequential(OrderedDict([
                               ('fc1', nn.Linear(25088, hidden_units, bias=True)),
@@ -88,12 +84,12 @@ def classifier(hidden_units):
                               ('fc2', nn.Linear(hidden_units, 102)),
                               ('output', nn.LogSoftmax(dim=1))
                           ]))
-    #model.classifier = classifier
+    model.classifier = classifier
 
-    return classifier
+    return model
 
 
-def training(model, classifier, learning_rate, device, epochs, trainloader, validloader):
+def training(model, classifier, learning_rate, device, epochs, trainloader, validloader, testloader):
     #
     # Setting up the training configurations and definitions
     # # Loss with the Negative Log LikeLihood
@@ -160,5 +156,20 @@ def training(model, classifier, learning_rate, device, epochs, trainloader, vali
                 train_loss = 0
                 # Make sure training is back on to allow drop out
                 model.train()
+    t_model = model
+    return t_model
 
-    return model
+
+def savechkp(t_model):
+    # Saves the checkpoint 
+    model.class_to_idx = train_data.class_to_idx
+
+    checkpoint = {'classifier': model.classifier,
+                  'class_to_idx': model.class_to_idx,
+                  'number_of_epochs': epochs,
+                  'learning_rate': learning_rate,
+                  'optimizer_dict': optimizer.state_dict(),
+                  'state_dict': model.state_dict(),
+                  'criterion': criterion}
+
+    torch.save(checkpoint, chkp_location)
