@@ -47,7 +47,7 @@ def data_load(data_dir):
     validloader = torch.utils.data.DataLoader(valid_data, batch_size=32, shuffle=False)
     testloader = torch.utils.data.DataLoader(test_data, batch_size=32, shuffle=False)
 
-    return trainloader, validloader, testloader
+    return train_data, trainloader, validloader, testloader
 
 def load_mapping(cat_name):
     # Loads the mapping of the category numbers to category names
@@ -56,7 +56,6 @@ def load_mapping(cat_name):
         cat_to_name = json.load(f)
 
     return cat_to_name
-
 
 def gpu_cpu(gpu):
     # Using the GPU (Cuda) or CPU to train
@@ -68,10 +67,16 @@ def gpu_cpu(gpu):
     return device
 
 
-def load_network(hidden_units):
-    # load a pre-trained netwerk selected
-    model = models.vgg11(pretrained=True)
+# Models to choose from
+vgg11 = models.vgg11(pretrained=True)
+vgg16 = models.vgg16(pretrained=True)
+vgg19 = models.vgg19(pretrained=True)
+# creating the list to link to in the function load_network
+models = {'vgg11': vgg11, 'vgg16': vgg16, 'vgg19': vgg19}
 
+def load_network(arch, hidden_units):
+    # load a pre-trained netwerk selected
+    model = models[arch]
     # Freeze parameters so we don't backprop through them,
     for param in model.parameters():
         param.requires_grad = False
@@ -98,7 +103,6 @@ def loss_opt(model, learning_rate):
     optimizer = optim.Adam(model.classifier.parameters(), lr=learning_rate)   
     
     return criterion, optimizer
-
 
 def training(model, device, epochs, trainloader, optimizer, criterion, validloader, testloader):
 
@@ -164,9 +168,9 @@ def training(model, device, epochs, trainloader, optimizer, criterion, validload
     t_model = model
     return t_model
 
-
-def savechkp(t_model):
+def save_chkp(t_model, train_data, epochs, learning_rate, optimizer, criterion, chkp_location):
     # Saves the checkpoint 
+    model = t_model
     model.class_to_idx = train_data.class_to_idx
 
     checkpoint = {'classifier': model.classifier,
