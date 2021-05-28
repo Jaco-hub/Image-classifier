@@ -88,7 +88,7 @@ def load_network(hidden_units):
 
     return model
 
-def optim(model, learning_rate):
+def loss_opt(model, learning_rate):
     #
     # Setting up the training configurations and definitions
     # # Loss with the Negative Log LikeLihood

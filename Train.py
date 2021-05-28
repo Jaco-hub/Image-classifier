@@ -5,7 +5,7 @@
 import argparse
 
 from torchvision import models
-from model_functions import data_load, gpu_cpu, load_network, optim, training
+from model_functions import data_load, gpu_cpu, load_network, loss_opt, training
 
 # def get_input_args():
 parser = argparse.ArgumentParser()
@@ -29,7 +29,7 @@ device = gpu_cpu(args.gpu)
 # 
 model = load_network(args.hidden_units)
 # function to generate the loss optimizer and criterion for the training
-criterion, optimizer = optim(model, args.learning_rate)
+criterion, optimizer = loss_opt(model, args.learning_rate)
 # returns the trained model
 t_model = training(model, device, args.epochs, trainloader, optimizer, criterion, validloader, testloader)
 
