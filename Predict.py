@@ -1,5 +1,5 @@
 # Perform the predictions
-# Import necessary 
+# Import necessary packages & functions
 import argparse
 from utility_functions import *
 
@@ -13,7 +13,7 @@ parser.add_argument('--gpu', type = bool, default = True, help = 'Use the GPU or
 args = parser.parse_args()
 
 # load the model from the checkpoint
-model = load_checkpoint(args.chkp_location)
+model, class_to_idx = load_checkpoint(args.chkp_location)
 # load the mapping of category numbers to names
 cat_to_name = load_mapping(args.cat_name)
 # using the GPU?
