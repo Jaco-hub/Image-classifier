@@ -21,9 +21,13 @@ device = gpu_cpu(args.gpu)
 # pre-process the image
 image = process_image(args.image_path)
 # imshow function to show image
-ax = imshow(image, ax=None, title=None)
+# ax = imshow(image, ax=None, title=None)
 # select the top number of likely cases for the picture
 #predict(args.image_path, device, model, args.top_k)
-ps_topk, ps_topk_class = predict(args.image_path, device, model, args.top_k)
+#ps_topk, ps_topk_class = predict(args.image_path, device, model, args.top_k)
+results = predict(model, args.image_path, device, args.top_k)
 # show the results of classifying the picture!
-plot_solution(image, ps_topk, ps_topk_class, model)
+# plot_solution(image, ps_topk, ps_topk_class, model)
+# print results
+for name, probability in results:
+    print('{}: {}%'.format(name,round(float(probability)*100, 1)))

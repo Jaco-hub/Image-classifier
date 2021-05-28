@@ -92,16 +92,16 @@ def imshow(image, ax=None, title=None):
 
 # imshow(process_image(image), None, 'surprise flower')
 
-def predict(image_path, device, model, top_k):
+def predict(model, image_path, device, top_k):
     ''' Predict the class (or classes) of an image using a trained deep learning model.
     '''
-    
+    model.eval()    
     # Implement the code to predict the class from an image file
     image = process_image(image_path).type(torch.FloatTensor).unsqueeze(0).to(device)
     
     # load_checkpoint(chkp_location)
     # is the eval mode needed? should be, to avoid drop-out....?
-    model.eval()
+
     
     model.idx_to_class = dict(map(reversed, model.class_to_idx.items()))
     ps_topk_class = []
@@ -120,10 +120,11 @@ def predict(image_path, device, model, top_k):
         for item in ps_topk_idx:
             ps_topk_class.append(model.idx_to_class[item])
     
+    results = np.column_stack((ps_topk_class, ps_topk))
     #print(ps_topk)
     #print(ps_topk_class)
-    return ps_topk, ps_topk_class
-
+    #return ps_topk, ps_topk_class
+    return results
 
 # Display an image along with the top 5 classes
 def plot_solution(image, ps_topk, ps_topk_class, model):
